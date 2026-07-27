@@ -17,6 +17,17 @@ export const DEFAULT_WEIGHTS: PillarWeights = {
   scale: 15,
 };
 
+const WEIGHT_KEYS = ["measurable", "commerce", "retention", "scale"] as const;
+
+export function parseWeights(value: unknown): PillarWeights {
+  if (typeof value !== "object" || value === null) return DEFAULT_WEIGHTS;
+
+  const record = value as Record<string, unknown>;
+  const isValid = WEIGHT_KEYS.every((key) => typeof record[key] === "number");
+
+  return isValid ? (record as unknown as PillarWeights) : DEFAULT_WEIGHTS;
+}
+
 export interface RubricDetection {
   category: Category;
   confidence: Confidence;

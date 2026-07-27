@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ScanStatus } from "@/lib/generated/prisma/client";
 import { db } from "@/lib/db";
 import { scanSite } from "@/lib/detection/scan";
+import { getPageRank } from "@/lib/enrichment/openpagerank";
+import { RUBRIC_VERSION, parseWeights, scoreRubric } from "@/lib/scoring/rubric";
 
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
@@ -11,6 +14,28 @@ export async function POST(request: NextRequest) {
   }
 
   const result = await scanSite(domain);
+
+  if (result.status !== ScanStatus.SUCCESS) {
+    const scan = await db.scan.create({
+      data: {
+        domain: result.domain,
+        status: result.status,
+        httpStatus: result.httpStatus,
+        server: result.server,
+      },
+      include: { detections: true, score: true },
+    });
+
+    return NextResponse.json(scan, { status: 201 });
+  }
+
+  const [icpProfile, pageRank] = await Promise.all([
+    db.icpProfile.findFirst({ where: { isActive: true } }),
+    getPageRank(result.domain),
+  ]);
+
+  const weights = parseWeights(icpProfile?.weights);
+  const score = scoreRubric({ detections: result.detections, openPageRank: pageRank.rank, weights });
 
   const scan = await db.scan.create({
     data: {
@@ -26,8 +51,19 @@ export async function POST(request: NextRequest) {
           matchedOn: detection.matchedOn,
         })),
       },
+      score: {
+        create: {
+          measurable: score.measurable,
+          commerce: score.commerce,
+          retention: score.retention,
+          scale: score.scale,
+          total: score.total,
+          verdict: score.verdict,
+          rubricVersion: RUBRIC_VERSION,
+        },
+      },
     },
-    include: { detections: true },
+    include: { detections: true, score: true },
   });
 
   return NextResponse.json(scan, { status: 201 });
