@@ -55,6 +55,13 @@ export default async function ScanPage({ params }: { params: Promise<{ id: strin
               <PillarBar label="Scale" points={scan.score.scale} max={weights.scale} />
             </div>
 
+            {scan.score.narrative && (
+              <div className="animate-fade-up mt-10 [animation-delay:210ms]">
+                <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted">Rationale</p>
+                <p className="mt-3 text-sm leading-relaxed text-foreground/90">{scan.score.narrative}</p>
+              </div>
+            )}
+
             <div className="animate-fade-up mt-14 [animation-delay:240ms]">
               <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted">Evidence</p>
               {scan.detections.length > 0 ? (

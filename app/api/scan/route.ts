@@ -3,6 +3,7 @@ import { ScanStatus } from "@/lib/generated/prisma/client";
 import { db } from "@/lib/db";
 import { scanSite } from "@/lib/detection/scan";
 import { getPageRank } from "@/lib/enrichment/openpagerank";
+import { generateNarrative } from "@/lib/narrative/claude";
 import { RUBRIC_VERSION, parseWeights, scoreRubric } from "@/lib/scoring/rubric";
 
 export async function POST(request: NextRequest) {
@@ -37,6 +38,12 @@ export async function POST(request: NextRequest) {
   const weights = parseWeights(icpProfile?.weights);
   const score = scoreRubric({ detections: result.detections, openPageRank: pageRank.rank, weights });
 
+  const narrative = await generateNarrative({
+    domain: result.domain,
+    detections: result.detections,
+    score,
+  });
+
   const scan = await db.scan.create({
     data: {
       domain: result.domain,
@@ -60,6 +67,7 @@ export async function POST(request: NextRequest) {
           total: score.total,
           verdict: score.verdict,
           rubricVersion: RUBRIC_VERSION,
+          narrative,
         },
       },
     },
