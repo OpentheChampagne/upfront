@@ -22,7 +22,11 @@ export interface ScanResult {
 }
 
 function normalizeDomain(input: string): string | null {
-  const stripped = input.trim().replace(/^https?:\/\//i, "").replace(/\/.*$/, "");
+  const stripped = input
+    .trim()
+    .replace(/^https?:\/\//i, "")
+    .replace(/\/.*$/, "")
+    .replace(/^www\./i, "");
   return DOMAIN_PATTERN.test(stripped) ? stripped.toLowerCase() : null;
 }
 
