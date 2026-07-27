@@ -14,7 +14,7 @@ Paste in a brand's website. Find out whether that brand is set up to measure a s
 4. Claude writes a short rationale in plain English.
 5. Persists everything so scans can be compared.
 
-![Upfront scorecard for glossier.com showing a GAPS verdict, pillar breakdown, and Claude's rationale](./screenshot.png)
+![Upfront homepage: the scan input and recent scans list, seeded with real DTC brands](./screenshot.png)
 
 ## Why this
 
