@@ -1,26 +1,107 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0c;
+  --surface: #131316;
+  --border: #232327;
+  --foreground: #f2f1ec;
+  --muted: #98979e;
+
+  --accent: #5eead4;
+  --accent-foreground: #04201c;
+
+  --confirmed: #34d399;
+  --opaque: #fbbf24;
+  --unknown: #9ca3af;
+
+  --ready: #34d399;
+  --gaps: #fbbf24;
+  --not-yet: #fb7185;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-confirmed: var(--confirmed);
+  --color-opaque: var(--opaque);
+  --color-unknown: var(--unknown);
+
+  --color-ready: var(--ready);
+  --color-gaps: var(--gaps);
+  --color-not-yet: var(--not-yet);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-serif: var(--font-instrument-serif);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes scan-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-scan-pulse {
+  animation: scan-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.spotlight-beam {
+  position: absolute;
+  top: -20%;
+  width: 55%;
+  height: 130%;
+  background: radial-gradient(ellipse 50% 50% at 50% 0%, rgba(94, 234, 212, 0.16), transparent 72%);
+  filter: blur(60px);
+  opacity: 0;
+  animation: spotlight-fade 1.6s ease-out 0.1s forwards;
+}
+
+.spotlight-beam-left {
+  left: -8%;
+  transform: rotate(-16deg);
+}
+
+.spotlight-beam-right {
+  right: -8%;
+  transform: rotate(16deg);
+}
+
+@keyframes spotlight-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
