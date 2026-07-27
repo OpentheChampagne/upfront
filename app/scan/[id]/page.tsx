@@ -5,6 +5,7 @@ import { titleCase } from "@/lib/format";
 import { parseWeights } from "@/lib/scoring/rubric";
 import { Badge, confidenceTone, verdictTone } from "@/app/components/Badge";
 import { PillarBar } from "@/app/components/PillarBar";
+import { ScanStateNotice } from "@/app/components/ScanStateNotice";
 
 export default async function ScanPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -86,9 +87,7 @@ export default async function ScanPage({ params }: { params: Promise<{ id: strin
             </p>
           </>
         ) : (
-          <p className="animate-fade-up mt-6 text-sm text-muted [animation-delay:120ms]">
-            This scan didn&apos;t reach a scoreable state. No marketing stack signal could be read.
-          </p>
+          <ScanStateNotice status={scan.status} httpStatus={scan.httpStatus} server={scan.server} />
         )}
       </div>
     </div>
