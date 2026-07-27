@@ -4,6 +4,8 @@ import { relativeTime } from "@/lib/format";
 import { Badge, verdictTone } from "@/app/components/Badge";
 import { ScanForm } from "@/app/components/ScanForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const recentScans = await db.scan.findMany({
     orderBy: { fetchedAt: "desc" },
