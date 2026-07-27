@@ -7,7 +7,8 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --import tsx --test lib/**/*.test.ts"
+    "test": "node --import tsx --test lib/**/*.test.ts",
+    "seed": "prisma db seed"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
