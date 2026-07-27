@@ -1,13 +1,82 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum ScanStatus {
+  SUCCESS
+  BLOCKED
+  TIMEOUT
+  INVALID
+}
+
+enum Category {
+  PIXEL
+  COMMERCE
+  RETENTION
+  TAG_MANAGER
+  UNIDENTIFIED
+}
+
+enum Confidence {
+  CONFIRMED
+  OPAQUE
+  UNKNOWN
+}
+
+enum Verdict {
+  READY
+  GAPS
+  NOT_YET
+}
+
+model Scan {
+  id         String      @id @default(cuid())
+  domain     String
+  status     ScanStatus
+  httpStatus Int?
+  server     String?
+  fetchedAt  DateTime    @default(now())
+  detections Detection[]
+  score      Score?
+
+  @@index([domain, fetchedAt])
+}
+
+model Detection {
+  id         String     @id @default(cuid())
+  scanId     String
+  technology String
+  category   Category
+  confidence Confidence
+  matchedOn  String
+  scan       Scan       @relation(fields: [scanId], references: [id], onDelete: Cascade)
+
+  @@index([scanId])
+  @@index([technology])
+}
+
+model Score {
+  id            String  @id @default(cuid())
+  scanId        String  @unique
+  measurable    Int
+  commerce      Int
+  retention     Int
+  scale         Int
+  total         Int
+  verdict       Verdict
+  rubricVersion String
+  narrative     String?
+  scan          Scan    @relation(fields: [scanId], references: [id], onDelete: Cascade)
+}
+
+model IcpProfile {
+  id       String  @id @default(cuid())
+  name     String  @unique
+  weights  Json
+  isActive Boolean @default(false)
 }
